@@ -1,0 +1,12 @@
+services:
+  git-server:
+    build: .
+    ports:
+      - "2222:22"
+    volumes:
+      - gitrepo:/repo
+      - ./keys:/keys:ro
+
+volumes:
+  gitrepo:
+

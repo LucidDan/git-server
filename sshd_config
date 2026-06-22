@@ -1,0 +1,15 @@
+Port 22
+
+PasswordAuthentication no
+PubkeyAuthentication yes
+PermitRootLogin no
+
+AllowUsers git
+
+AuthorizedKeysFile .ssh/authorized_keys
+
+ChallengeResponseAuthentication no
+UsePAM no
+
+Subsystem sftp internal-sftp
+
