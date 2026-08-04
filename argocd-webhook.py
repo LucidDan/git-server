@@ -168,7 +168,9 @@ def get_commit(sha: str) -> CommitDict:
 
 
 def get_commits(first_commit: str, last_commit: str) -> list[CommitDict]:
-    lines = git("rev-list", "--reverse", f"{first_commit}..{last_commit}").splitlines()
+    # If first_commit is empty, its the initial commit, there's no rev-list to check
+    commit_range = f"{first_commit}..{last_commit}" if first_commit != EMPTY_REF else last_commit
+    lines = git("rev-list", "--reverse", commit_range).splitlines()
 
     return [get_commit(line) for line in lines]
 
@@ -211,7 +213,6 @@ def main() -> int:
         "checkout_sha": "",
         "message": "",
         "total_commits_count": 0,
-
     }
 
     def make_payload(_old_commit: str, _new_commit: str, _ref: str) -> PayloadDict:
@@ -222,7 +223,6 @@ def main() -> int:
             "ref": _ref,
             "checkout_sha": _new_commit,
             "message": commits[-1]["message"] if commits else "",
-            "created": _old_commit == EMPTY_REF,
             "commits": commits,
             "total_commits_count": len(commits),
         }
