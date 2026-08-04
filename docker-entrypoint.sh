@@ -26,7 +26,7 @@ chown -R git:git "$SSH_DIR"
 
 if [ ! -d /repo/bootstrap.git ]; then
     git init --bare /repo/bootstrap.git
-    cp /usr/local/bin/argocd-sync.py /repo/bootstrap.git/hooks/post-receive
+    cp /usr/local/bin/argocd-webhook.py /repo/bootstrap.git/hooks/post-receive
     chmod +x /repo/bootstrap.git/hooks/post-receive
     chown -R git:git /repo/bootstrap.git
 fi
