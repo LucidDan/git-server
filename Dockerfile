@@ -14,10 +14,10 @@ RUN \
     && chmod 700 /home/git/.ssh
 
 COPY sshd_config /etc/ssh/
-COPY argocd-webhook.py git-restrict.sh docker-entrypoint.sh /usr/local/bin/
+COPY send-webhook.py git-restrict.sh docker-entrypoint.sh /usr/local/bin/
 
 RUN \
-    chmod 0755 /usr/local/bin/argocd-webhook.py /usr/local/bin/git-restrict.sh /usr/local/bin/docker-entrypoint.sh \
-    && chown root:root /usr/local/bin/argocd-webhook.py /usr/local/bin/git-restrict.sh /usr/local/bin/docker-entrypoint.sh
+    chmod 0755 /usr/local/bin/send-webhook.py /usr/local/bin/git-restrict.sh /usr/local/bin/docker-entrypoint.sh \
+    && chown root:root /usr/local/bin/send-webhook.py /usr/local/bin/git-restrict.sh /usr/local/bin/docker-entrypoint.sh
 
 

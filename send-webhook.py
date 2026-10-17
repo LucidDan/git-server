@@ -87,9 +87,10 @@ def get_config(name: str, *, secret: bool = False, default: str = "") -> str:
             raise
 
 
-def send_webhook(payload: PayloadDict, use_ssl: bool = False) -> bool:
+def send_webhook(payload: PayloadDict) -> bool:
     token = get_config("argocd-token", secret=True)
-    host = get_config("argocd-host", default="argocd-server.argocd.svc.cluster.local")
+    host = get_config("webhook-host", default="argocd-server.argocd.svc.cluster.local")
+    use_ssl = get_config("webhook-ssl", default="false").lower() in {"t","true"}
 
     data = json.dumps(payload).encode("utf-8")
 
