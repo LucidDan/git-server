@@ -3,10 +3,19 @@ set -euo pipefail
 
 SSH_DIR=/home/git/.ssh
 ETC_DIR=/home/git/etc
+CONFIG_DIR=/home/git/config
 SECRET_DIR=/home/git/secret
 KEYS_DIR="/home/git/keys"
 REPO_DIR=/home/git/repo
 AUTHORIZED_KEYS=${SSH_DIR}/authorized_keys
+
+DEBUG=$(cat "${CONFIG_DIR}/debug" 2>/dev/null || true)
+
+if [[ "${DEBUG:-}" ]]; then
+  echo "Debug mode enabled"
+else
+  echo "Debug mode off"
+fi
 
 mkdir -p "$SSH_DIR"
 chmod 700 "$SSH_DIR"
@@ -15,13 +24,13 @@ chmod 700 "$SSH_DIR"
 
 if [ -d "${KEYS_DIR}/readonly" ]; then
     for key in $(ls -1 "${KEYS_DIR}/readonly/"); do
-        echo "restrict,command=\"/home/git/bin/git-restrict.py ro\" $(cat ${KEYS_DIR}/readonly/$key)" >> "$AUTHORIZED_KEYS"
+        echo "restrict,environment=\"DEBUG=${DEBUG:-}\",command=\"/home/git/bin/git-restrict.py ro\" $(cat ${KEYS_DIR}/readonly/$key)" >> "$AUTHORIZED_KEYS"
     done
 fi
 
 if [ -d "${KEYS_DIR}/readwrite" ]; then
     for key in $(ls -1 "${KEYS_DIR}/readwrite/"); do
-        echo "restrict,command=\"/home/git/bin/git-restrict.py rw\" $(cat ${KEYS_DIR}/readwrite/$key)" >> "$AUTHORIZED_KEYS"
+        echo "restrict,environment=\"DEBUG=${DEBUG:-}\",command=\"/home/git/bin/git-restrict.py rw\" $(cat ${KEYS_DIR}/readwrite/$key)" >> "$AUTHORIZED_KEYS"
     done
 fi
 

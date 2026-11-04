@@ -1,9 +1,13 @@
 services:
   git-server:
     build: .
+    environment:
+      DEBUG: "1"
     ports:
       - "2222:2222"
     volumes:
+      - ./config:/home/git/config
+      - ./secret:/home/git/secret
       - gitrepo:/home/git/repo
       - ./keys:/home/git/secret/keys:ro
 

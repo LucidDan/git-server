@@ -13,6 +13,14 @@ def err(msg: str) -> NoReturn:
     sys.exit(msg)
 
 cmd = os.environ.get("SSH_ORIGINAL_COMMAND", "").strip()
+dbg = os.environ.get("DEBUG", "").lower() in {"true", "t", "1"}
+
+def debug(msg: str) -> None:
+    if dbg:
+        print(msg, file=sys.stderr, flush=True)
+
+debug(f"Received command: {cmd} (via {sys.argv})")
+
 try:
     git_mode = sys.argv[1]
 except IndexError:
@@ -25,8 +33,12 @@ if git_mode not in ("ro", "rw"):
 if cmd.startswith(("git-upload-pack ", "git-upload-archive ")):
     if git_mode == "ro":
         err("Push access denied")
+    else:
+        debug("Push access accepted")
 elif not cmd.startswith("git-receive-pack "):
     err(f"Unknown command: {cmd}")
+else:
+    debug("Clone access accepted")
 
 # Path is passed inside single quotes, so we can take the first non-option with quotes
 args = cmd.split("'", maxsplit=2)
@@ -45,6 +57,7 @@ if not repo_path.is_dir():
     err(f"Repository does not exist: {repo_path}")
 
 cmd_args = ["git-shell", "-c", f"{args[0]}'{repo_path}'{args[2]}"]
+debug(f"Final command to pass to git-shell: {cmd_args}")
 os.execv(
     "/usr/bin/git-shell",
     cmd_args,
