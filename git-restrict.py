@@ -30,12 +30,12 @@ if not cmd:
 
 if git_mode not in ("ro", "rw"):
     err(f"Unknown git mode: {git_mode}")
-if cmd.startswith(("git-upload-pack ", "git-upload-archive ")):
+if cmd.startswith("git-receive-pack "):
     if git_mode == "ro":
         err("Push access denied")
     else:
         debug("Push access accepted")
-elif not cmd.startswith("git-receive-pack "):
+elif not cmd.startswith(("git-upload-pack ", "git-upload-archive ")):
     err(f"Unknown command: {cmd}")
 else:
     debug("Clone access accepted")
