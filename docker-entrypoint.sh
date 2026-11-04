@@ -38,7 +38,6 @@ chmod 600 "$AUTHORIZED_KEYS"
 
 if [ -d "${REPO_DIR}/bootstrap.git" ]; then
     echo "Initial bootstrap repository already exists"
-    ls -la "${REPO_DIR}/bootstrap.git"
 else
     echo "Creating initial bootstrap repository"
     git init --bare "${REPO_DIR}/bootstrap.git"
