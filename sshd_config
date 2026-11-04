@@ -1,15 +1,21 @@
-Port 22
+AllowTcpForwarding no
+AllowUsers git
+AuthenticationMethods publickey
+AuthorizedKeysFile .ssh/authorized_keys
+ChallengeResponseAuthentication no
+# Something we might experiment with; chroot jail with only the git-shell etc in it
+#ChrootDirectory /home/git
+DisableForwarding yes
+# entrypoint script will either get these from a secret, or generate them
+HostKey /home/git/etc/ssh_host_ed25519_key
+HostKey /home/git/etc/ssh_host_rsa_key
 
 PasswordAuthentication no
-PubkeyAuthentication yes
+PermitTTY no
 PermitRootLogin no
-
-AllowUsers git
-
-AuthorizedKeysFile .ssh/authorized_keys
-
-ChallengeResponseAuthentication no
-UsePAM no
-
-Subsystem sftp internal-sftp
-
+# sshd is the only thing running in the container, we dont need a pidfile
+PidFile none
+Port 2222
+PrintLastLog no
+PrintMotd no
+PubkeyAuthentication yes

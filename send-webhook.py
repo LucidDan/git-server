@@ -76,27 +76,29 @@ class PayloadDict(TypedDict, total=True):
     push_options: dict
 
 
-def get_config(name: str, *, secret: bool = False, default: str = "") -> str:
-    p = Path("/repo/secret") if secret else Path("/repo/config")
+def get_config(name: str, *, secret: bool = False, default: str | None = None) -> str:
+    p = Path("/home/git/secret") if secret else Path("/home/git/config")
     try:
         return (p / name).read_text().strip() or default
     except FileNotFoundError:
-        if default:
+        if default is not None:
             return default
         else:
             raise
 
 
 def send_webhook(payload: PayloadDict) -> bool:
-    token = get_config("webhook-token", secret=True)
-    host = get_config("webhook-host", default="argocd-server.argocd.svc.cluster.local")
+    token = get_config("webhook-token", default="", secret=True)
+    host = get_config("webhook-host", default="argocd-server.argocd.svc")
     use_ssl = get_config("webhook-ssl", default="false").lower() in {"t","true"}
 
     data = json.dumps(payload).encode("utf-8")
 
+    url = f"http://{host}/api/webhook" if not use_ssl else f"https://{host}/api/webhook"
+    print(f"Sending event webhook to {url}", file=sys.stderr, flush=True)
     with request.urlopen(
             request.Request(
-                f"http://{host}/api/webhook" if not use_ssl else f"https://{host}/api/webhook",
+                url,
                 data=data,
                 method="POST",
                 headers={
@@ -188,22 +190,22 @@ def main() -> int:
             "name": repo_name,
             # Note: we don't support https, but for argocd purposes,
             # it just wants the url to compare the hostname + repo path with its internal records
-            "web_url": f"https://{host}/repo/{repo_name}",
+            "web_url": f"https://{host}/{repo_name}",
             "default_branch": "main",
             "visibility_level": 0,
             "namespace": "repo",
-            "path_with_namespace": f"repo/{repo_name}",
-            "url": f"git@{host}:repo/{repo_name}.git",
-            "git_http_url": f"https://{host}/repo/{repo_name}.git",
-            "git_ssh_url": f"git@{host}:repo/{repo_name}.git",
-            "http_url": f"https://{host}/repo/{repo_name}.git",
-            "ssh_url": f"git@{host}:repo/{repo_name}.git",
+            "path_with_namespace": repo_name,
+            "url": f"git@{host}:{repo_name}.git",
+            "git_http_url": f"https://{host}/{repo_name}.git",
+            "git_ssh_url": f"git@{host}:{repo_name}.git",
+            "http_url": f"https://{host}/{repo_name}.git",
+            "ssh_url": f"git@{host}:{repo_name}.git",
         },
         "repository": {
             "name": repo_name,
-            "url": f"git@{host}:repo/{repo_name}.git",
-            "git_http_url": f"https://{host}/repo/{repo_name}.git",
-            "git_ssh_url": f"git@{host}:repo/{repo_name}.git",
+            "url": f"git@{host}:{repo_name}.git",
+            "git_http_url": f"https://{host}/{repo_name}.git",
+            "git_ssh_url": f"git@{host}:{repo_name}.git",
             "visibility_level": 0,
         },
         "push_options": {},

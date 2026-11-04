@@ -2,10 +2,10 @@ services:
   git-server:
     build: .
     ports:
-      - "2222:22"
+      - "2222:2222"
     volumes:
-      - gitrepo:/repo
-      - ./keys:/keys:ro
+      - gitrepo:/home/git/repo
+      - ./keys:/home/git/secret/keys:ro
 
 volumes:
   gitrepo:
