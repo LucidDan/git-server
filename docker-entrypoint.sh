@@ -4,7 +4,7 @@ set -euo pipefail
 SSH_DIR=/home/git/.ssh
 ETC_DIR=/home/git/etc
 SECRET_DIR=/home/git/secret
-KEYS_DIR="${SECRET_DIR}/keys"
+KEYS_DIR="/home/git/keys"
 REPO_DIR=/home/git/repo
 AUTHORIZED_KEYS=${SSH_DIR}/authorized_keys
 

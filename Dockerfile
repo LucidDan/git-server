@@ -20,7 +20,7 @@ RUN \
 # Once we have everything in place, we'll switch to that USER in the image
 RUN useradd -m -d /home/git -u 1000 git \
     && passwd -d git \
-    && mkdir -p /var/run/sshd /home/git/.ssh /home/git/repo /home/git/config /home/git/secret /home/git/etc /home/git/bin \
+    && mkdir -p /var/run/sshd /home/git/.ssh /home/git/repo /home/git/keys /home/git/config /home/git/secret /home/git/etc /home/git/bin \
     && chown -R git:git /home/git \
     && chmod 700 /home/git/.ssh /home/git/repo
 
