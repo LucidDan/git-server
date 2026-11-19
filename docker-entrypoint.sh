@@ -28,6 +28,10 @@ if [ -d "${KEYS_DIR}/readonly" ]; then
     done
 fi
 
+if [ -f "${SECRET_DIR}/argocd-deploy-key" ]; then
+    echo "restrict,environment=\"DEBUG=${DEBUG:-}\",command=\"/home/git/bin/git-restrict.py ro\" $(cat ${SECRET_DIR}/argocd-deploy-key)" >> "$AUTHORIZED_KEYS"
+fi
+
 if [ -d "${KEYS_DIR}/readwrite" ]; then
     for key in $(ls -1 "${KEYS_DIR}/readwrite/"); do
         echo "restrict,environment=\"DEBUG=${DEBUG:-}\",command=\"/home/git/bin/git-restrict.py rw\" $(cat ${KEYS_DIR}/readwrite/$key)" >> "$AUTHORIZED_KEYS"
